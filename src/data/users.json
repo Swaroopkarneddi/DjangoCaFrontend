@@ -1,0 +1,10 @@
+
+[
+  {
+    "id": 1,
+    "name": "Test User",
+    "email": "test@example.com",
+    "address": "123 Test Street, Test City, 400001",
+    "phone": "9876543210"
+  }
+]

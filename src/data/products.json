@@ -1,0 +1,303 @@
+
+[
+  {
+    "id": 1,
+    "name": "Premium Wireless Headphones",
+    "price": 7999,
+    "description": "Experience crystal-clear sound with our premium wireless headphones. Features noise cancellation, 20-hour battery life, and comfortable over-ear design.",
+    "category": "Electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&auto=format&fit=crop&q=60"
+    ],
+    "rating": 4.7,
+    "reviews": [
+      {
+        "id": 1,
+        "userId": 1,
+        "userName": "Rajesh Kumar",
+        "rating": 5,
+        "comment": "Best headphones I've ever owned! Sound quality is amazing.",
+        "date": "2023-03-15"
+      },
+      {
+        "id": 2,
+        "userId": 2,
+        "userName": "Priya Singh",
+        "rating": 4,
+        "comment": "Great sound, but battery could be better. Overall very good product.",
+        "date": "2023-02-28"
+      }
+    ],
+    "brand": "SoundMaster",
+    "stock": 25,
+    "featured": true,
+    "trending": true
+  },
+  {
+    "id": 2,
+    "name": "Smart Fitness Watch",
+    "price": 3499,
+    "description": "Track your fitness goals with this smart watch. Features heart rate monitoring, step counter, sleep tracking, and water resistance up to 50m.",
+    "category": "Electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?w=800&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=60"
+    ],
+    "rating": 4.5,
+    "reviews": [
+      {
+        "id": 3,
+        "userId": 3,
+        "userName": "Amit Patel",
+        "rating": 5,
+        "comment": "Accurate tracking and great battery life! Worth every rupee.",
+        "date": "2023-04-10"
+      }
+    ],
+    "brand": "FitTech",
+    "stock": 42,
+    "featured": true
+  },
+  {
+    "id": 3,
+    "name": "Designer Cotton T-Shirt",
+    "price": 899,
+    "description": "Premium cotton t-shirt with modern design. Comfortable, breathable, and perfect for casual wear.",
+    "category": "Fashion",
+    "images": [
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1622445275576-721325763afe?w=800&auto=format&fit=crop&q=60"
+    ],
+    "rating": 4.2,
+    "reviews": [
+      {
+        "id": 4,
+        "userId": 4,
+        "userName": "Neha Sharma",
+        "rating": 4,
+        "comment": "Good quality fabric, but sizing runs a bit small.",
+        "date": "2023-01-22"
+      }
+    ],
+    "brand": "UrbanStyle",
+    "stock": 78,
+    "trending": true
+  },
+  {
+    "id": 4,
+    "name": "Professional DSLR Camera",
+    "price": 58999,
+    "description": "Capture stunning images with this professional DSLR camera. Features 24.2MP sensor, 4K video recording, and advanced autofocus system.",
+    "category": "Electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=800&auto=format&fit=crop&q=60"
+    ],
+    "rating": 4.8,
+    "reviews": [
+      {
+        "id": 5,
+        "userId": 5,
+        "userName": "Vikram Malhotra",
+        "rating": 5,
+        "comment": "Amazing image quality and easy to use. Professional results every time!",
+        "date": "2023-05-05"
+      }
+    ],
+    "brand": "PhotoPro",
+    "stock": 10,
+    "featured": true
+  },
+  {
+    "id": 5,
+    "name": "Stainless Steel Water Bottle",
+    "price": 599,
+    "description": "Eco-friendly stainless steel water bottle. Keeps drinks cold for 24 hours and hot for 12 hours. 750ml capacity.",
+    "category": "Home & Kitchen",
+    "images": [
+      "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&auto=format&fit=crop&q=60"
+    ],
+    "rating": 4.3,
+    "reviews": [
+      {
+        "id": 6,
+        "userId": 6,
+        "userName": "Ritu Desai",
+        "rating": 4,
+        "comment": "Good quality, but slightly heavy when filled.",
+        "date": "2023-02-18"
+      }
+    ],
+    "brand": "EcoLife",
+    "stock": 100
+  },
+  {
+    "id": 6,
+    "name": "Leather Wallet",
+    "price": 1299,
+    "description": "Genuine leather wallet with multiple card slots and secure coin pocket. Slim design fits comfortably in pocket.",
+    "category": "Fashion",
+    "images": [
+      "https://images.unsplash.com/photo-1627123409073-3762c2e52f27?w=800&auto=format&fit=crop&q=60"
+    ],
+    "rating": 4.6,
+    "reviews": [
+      {
+        "id": 7,
+        "userId": 7,
+        "userName": "Karan Mehra",
+        "rating": 5,
+        "comment": "Premium quality leather and excellent craftsmanship!",
+        "date": "2023-03-30"
+      }
+    ],
+    "brand": "LeatherCraft",
+    "stock": 35,
+    "trending": true
+  },
+  {
+    "id": 7,
+    "name": "Bluetooth Portable Speaker",
+    "price": 2499,
+    "description": "Compact portable speaker with powerful sound. Features Bluetooth 5.0, 10-hour battery life, and waterproof design.",
+    "category": "Electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1589003077984-894e133f8525?w=800&auto=format&fit=crop&q=60"
+    ],
+    "rating": 4.4,
+    "reviews": [
+      {
+        "id": 8,
+        "userId": 8,
+        "userName": "Sunita Rao",
+        "rating": 4,
+        "comment": "Great sound for its size! Perfect for outdoor use.",
+        "date": "2023-04-25"
+      }
+    ],
+    "brand": "SoundWave",
+    "stock": 28,
+    "featured": true
+  },
+  {
+    "id": 8,
+    "name": "Organic Green Tea (100g)",
+    "price": 349,
+    "description": "Premium organic green tea from the hills of Darjeeling. Rich in antioxidants and naturally refreshing.",
+    "category": "Food & Beverages",
+    "images": [
+      "https://images.unsplash.com/photo-1627435601361-ec25f5b1d0e5?w=800&auto=format&fit=crop&q=60"
+    ],
+    "rating": 4.7,
+    "reviews": [
+      {
+        "id": 9,
+        "userId": 9,
+        "userName": "Anjali Nair",
+        "rating": 5,
+        "comment": "The aroma and taste are exceptional! Will definitely buy again.",
+        "date": "2023-05-12"
+      }
+    ],
+    "brand": "OrganicLife",
+    "stock": 50
+  },
+  {
+    "id": 9,
+    "name": "Yoga Mat",
+    "price": 999,
+    "description": "Non-slip yoga mat made from eco-friendly materials. Perfect thickness for comfort during practice.",
+    "category": "Sports & Fitness",
+    "images": [
+      "https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=800&auto=format&fit=crop&q=60"
+    ],
+    "rating": 4.5,
+    "reviews": [
+      {
+        "id": 10,
+        "userId": 10,
+        "userName": "Rahul Verma",
+        "rating": 4,
+        "comment": "Good grip and comfortable cushioning. Value for money.",
+        "date": "2023-01-15"
+      }
+    ],
+    "brand": "FitLife",
+    "stock": 45,
+    "trending": true
+  },
+  {
+    "id": 10,
+    "name": "Wireless Gaming Mouse",
+    "price": 1899,
+    "description": "High-precision wireless gaming mouse with RGB lighting. Features adjustable DPI and ergonomic design for extended gaming sessions.",
+    "category": "Electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1605773527852-c546a8584ea3?w=800&auto=format&fit=crop&q=60"
+    ],
+    "rating": 4.6,
+    "reviews": [
+      {
+        "id": 11,
+        "userId": 11,
+        "userName": "Aditya Shah",
+        "rating": 5,
+        "comment": "Responsive, comfortable, and the battery lasts for days! Perfect for gaming.",
+        "date": "2023-03-05"
+      }
+    ],
+    "brand": "GameTech",
+    "stock": 30,
+    "featured": true
+  },
+  {
+    "id": 11,
+    "name": "Designer Sunglasses",
+    "price": 2799,
+    "description": "Stylish polarized sunglasses with UV protection. Lightweight frame and classic design suits all face shapes.",
+    "category": "Fashion",
+    "images": [
+      "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=800&auto=format&fit=crop&q=60"
+    ],
+    "rating": 4.3,
+    "reviews": [
+      {
+        "id": 12,
+        "userId": 12,
+        "userName": "Meera Kapoor",
+        "rating": 4,
+        "comment": "Good quality and stylish design, but case could be better.",
+        "date": "2023-04-18"
+      }
+    ],
+    "brand": "VisionStyle",
+    "stock": 25,
+    "trending": true
+  },
+  {
+    "id": 12,
+    "name": "Smartphone Power Bank 20000mAh",
+    "price": 1499,
+    "description": "High-capacity power bank for smartphones and tablets. Features fast charging, dual USB ports, and compact design.",
+    "category": "Electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800&auto=format&fit=crop&q=60"
+    ],
+    "rating": 4.5,
+    "reviews": [
+      {
+        "id": 13,
+        "userId": 13,
+        "userName": "Sanjay Gupta",
+        "rating": 4,
+        "comment": "Charges my phone multiple times. Great for travel!",
+        "date": "2023-02-10"
+      }
+    ],
+    "brand": "PowerMax",
+    "stock": 60
+  }
+]
