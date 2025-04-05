@@ -1,8 +1,9 @@
+// import productData from "@/data/products.json";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "@/utils/toast";
 import productData from "@/data/products.json";
-// import userData from "@/data/users.json";
 import axios from "axios";
+
 export type Product = {
   id: number;
   name: string;
@@ -77,7 +78,7 @@ const ShopContext = createContext<ShopContextType | undefined>(undefined);
 export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [products, setProducts] = useState<Product[]>(productData);
+  const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [wishlist, setWishlist] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -85,10 +86,27 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [cartTotal, setCartTotal] = useState(0);
 
+  // Fetch products from backend
   useEffect(() => {
-    const total = cart.reduce((acc, item) => {
-      return acc + item.product.price * item.quantity;
-    }, 0);
+    const fetchProducts = async () => {
+      try {
+        const res = await axios.get("http://127.0.0.1:8000/api/products/");
+        setProducts(res.data);
+      } catch (error) {
+        console.error(
+          "Failed to fetch products from backend, loading fallback data."
+        );
+        setProducts(productData);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    const total = cart.reduce(
+      (acc, item) => acc + item.product.price * item.quantity,
+      0
+    );
     setCartTotal(total);
   }, [cart]);
 
@@ -130,7 +148,6 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
       const existingItem = prevCart.find(
         (item) => item.product.id === product.id
       );
-
       if (existingItem) {
         return prevCart.map((item) =>
           item.product.id === product.id
@@ -141,7 +158,6 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
         return [...prevCart, { product, quantity }];
       }
     });
-
     toast.success(`${product.name} added to cart`);
   };
 
@@ -157,7 +173,6 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
       removeFromCart(productId);
       return;
     }
-
     setCart((prevCart) =>
       prevCart.map((item) =>
         item.product.id === productId ? { ...item, quantity } : item
@@ -171,9 +186,8 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addToWishlist = (product: Product) => {
     const isInWishlist = wishlist.some((item) => item.id === product.id);
-
     if (!isInWishlist) {
-      setWishlist((prevWishlist) => [...prevWishlist, product]);
+      setWishlist((prev) => [...prev, product]);
       toast.success(`${product.name} added to wishlist`);
     } else {
       removeFromWishlist(product.id);
@@ -181,9 +195,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const removeFromWishlist = (productId: number) => {
-    setWishlist((prevWishlist) =>
-      prevWishlist.filter((item) => item.id !== productId)
-    );
+    setWishlist((prev) => prev.filter((item) => item.id !== productId));
     toast.info("Item removed from wishlist");
   };
 
@@ -193,7 +205,6 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
         email,
         password,
       });
-
       const loggedInUser: User = {
         id: response.data.id,
         name: response.data.name,
@@ -201,11 +212,9 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
         address: response.data.address || "",
         phone: response.data.phone || "",
       };
-
       setUser(loggedInUser);
       setIsAuthenticated(true);
       localStorage.setItem("user", JSON.stringify(loggedInUser));
-
       toast.success(`Welcome back, ${loggedInUser.name}!`);
       return true;
     } catch (error: any) {
@@ -227,7 +236,6 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
         email,
         password,
       });
-
       const newUser: User = {
         id: response.data.id,
         name: response.data.name,
@@ -235,11 +243,9 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
         address: response.data.address || "",
         phone: response.data.phone || "",
       };
-
       setUser(newUser);
       setIsAuthenticated(true);
       localStorage.setItem("user", JSON.stringify(newUser));
-
       toast.success(`Welcome, ${name}!`);
       return true;
     } catch (error: any) {
@@ -314,12 +320,11 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const calculateAverageRating = (reviews: ProductReview[]): number => {
     if (reviews.length === 0) return 0;
-
     const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
     return parseFloat((sum / reviews.length).toFixed(1));
   };
 
-  const value = {
+  const value: ShopContextType = {
     products,
     cart,
     wishlist,
@@ -346,8 +351,6 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useShop = (): ShopContextType => {
   const context = useContext(ShopContext);
-  if (context === undefined) {
-    throw new Error("useShop must be used within a ShopProvider");
-  }
+  if (!context) throw new Error("useShop must be used within a ShopProvider");
   return context;
 };
