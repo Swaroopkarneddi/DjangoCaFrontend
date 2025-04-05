@@ -288,14 +288,18 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
     return products.find((product) => product.id === id);
   };
 
-  const addReview = (productId: number, rating: number, comment: string) => {
+  const addReview = async (
+    productId: number,
+    rating: number,
+    comment: string
+  ) => {
     if (!user) {
       toast.error("You must be logged in to add a review");
       return;
     }
 
     const newReview: ProductReview = {
-      id: Date.now(),
+      id: Date.now(), // Temporary local ID; real one should come from backend ideally
       userId: user.id,
       userName: user.name,
       rating,
@@ -303,25 +307,49 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
       date: new Date().toISOString().split("T")[0],
     };
 
-    setProducts((prevProducts) =>
-      prevProducts.map((product) =>
-        product.id === productId
-          ? {
-              ...product,
-              reviews: [...product.reviews, newReview],
-              rating: calculateAverageRating([...product.reviews, newReview]),
-            }
-          : product
-      )
-    );
+    try {
+      await axios.post(
+        `http://127.0.0.1:8000/products/${productId}/reviews/add/`,
+        {
+          userId: newReview.userId,
+          rating: newReview.rating,
+          comment: newReview.comment,
+          date: newReview.date,
+        }
+      );
 
-    toast.success("Review added successfully");
+      setProducts((prevProducts) =>
+        prevProducts.map((product) => {
+          if (product.id === productId) {
+            const updatedReviews = [...product.reviews, newReview];
+            return {
+              ...product,
+              reviews: updatedReviews,
+              rating: calculateAverageRating(updatedReviews),
+            };
+          }
+          return product;
+        })
+      );
+
+      toast.success("Review added successfully");
+    } catch (error) {
+      console.error("Error adding review:", error);
+      toast.error("Failed to add review. Please try again.");
+    }
   };
+
+  // const calculateAverageRating = (reviews: ProductReview[]): number => {
+  //   if (reviews.length === 0) return 0;
+  //   const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+  //   return parseFloat((sum / reviews.length).toFixed(1));
+  // };
 
   const calculateAverageRating = (reviews: ProductReview[]): number => {
     if (reviews.length === 0) return 0;
-    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-    return parseFloat((sum / reviews.length).toFixed(1));
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const average = totalRating / reviews.length;
+    return parseFloat(average.toFixed(1));
   };
 
   const value: ShopContextType = {
