@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "@/utils/toast";
 import productData from "@/data/products.json";
-import userData from "@/data/users.json";
+// import userData from "@/data/users.json";
 import axios from "axios";
 export type Product = {
   id: number;
