@@ -1,4 +1,3 @@
-
 import React from "react";
 import { format } from "date-fns";
 import { useShop } from "@/context/ShopContext";
@@ -41,7 +40,6 @@ const Orders = () => {
     }
   };
 
-  // Format date from ISO string
   const formatOrderDate = (dateString: string) => {
     try {
       return format(new Date(dateString), "dd MMM yyyy, h:mm a");
@@ -56,7 +54,9 @@ const Orders = () => {
         <div className="container mx-auto px-4 py-16 text-center">
           <div className="max-w-md mx-auto">
             <Package2 size={64} className="mx-auto text-gray-400 mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Login to view your orders</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Login to view your orders
+            </h2>
             <p className="text-gray-500 mb-6">
               You need to be logged in to view your order history.
             </p>
@@ -77,12 +77,17 @@ const Orders = () => {
         {orders.length === 0 ? (
           <div className="text-center py-12">
             <ShoppingBag size={64} className="mx-auto text-gray-400 mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">No orders yet</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              No orders yet
+            </h2>
             <p className="text-gray-500 mb-6">
-              You haven't placed any orders yet. Start shopping to see your orders here.
+              You haven't placed any orders yet. Start shopping to see your
+              orders here.
             </p>
             <Link to="/products">
-              <Button className="bg-brand-600 hover:bg-brand-700">Browse Products</Button>
+              <Button className="bg-brand-600 hover:bg-brand-700">
+                Browse Products
+              </Button>
             </Link>
           </div>
         ) : (
@@ -100,8 +105,11 @@ const Orders = () => {
                       </CardDescription>
                     </div>
                     <div className="flex items-center gap-4">
-                      <Badge className={`${getStatusColor(order.status)} text-white`}>
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                      <Badge
+                        className={`${getStatusColor(order.status)} text-white`}
+                      >
+                        {order.status.charAt(0).toUpperCase() +
+                          order.status.slice(1)}
                       </Badge>
                       <span className="font-semibold text-brand-700">
                         {formatCurrency(order.totalAmount)}
@@ -125,22 +133,31 @@ const Orders = () => {
                             <div className="flex items-center gap-3">
                               <div className="h-12 w-12 rounded bg-gray-100 overflow-hidden">
                                 <img
-                                  src={item.product.images[0] || "/placeholder.svg"}
+                                  src={
+                                    item.product.images[0] || "/placeholder.svg"
+                                  }
                                   alt={item.product.name}
                                   className="h-full w-full object-cover"
                                 />
                               </div>
-                              <span className="line-clamp-1">{item.product.name}</span>
+                              <span className="line-clamp-1">
+                                {item.product.name}
+                              </span>
                             </div>
                           </TableCell>
-                          <TableCell className="text-right">{item.quantity}</TableCell>
+                          <TableCell className="text-right">
+                            {item.quantity}
+                          </TableCell>
                           <TableCell className="text-right">
                             {formatCurrency(item.product.price * item.quantity)}
                           </TableCell>
                         </TableRow>
                       ))}
                       <TableRow>
-                        <TableCell colSpan={2} className="text-right font-semibold">
+                        <TableCell
+                          colSpan={2}
+                          className="text-right font-semibold"
+                        >
                           Total:
                         </TableCell>
                         <TableCell className="text-right font-semibold text-brand-700">
@@ -151,7 +168,9 @@ const Orders = () => {
                   </Table>
                   <div className="p-4 border-t">
                     <div className="text-sm">
-                      <p className="font-medium text-gray-500">Delivery Address:</p>
+                      <p className="font-medium text-gray-500">
+                        Delivery Address:
+                      </p>
                       <p className="text-gray-700">{order.address}</p>
                     </div>
                   </div>

@@ -69,6 +69,7 @@ interface ShopContextType {
   register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
   placeOrder: (address: string, paymentMethod: string) => void;
+  fetchUserOrders: (userId: number) => Promise<Order[]>;
   getProductById: (id: number) => Product | undefined;
   addReview: (productId: number, rating: number, comment: string) => void;
   cartTotal: number;
@@ -115,7 +116,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
     const storedCart = localStorage.getItem("cart");
     const storedWishlist = localStorage.getItem("wishlist");
     const storedUser = localStorage.getItem("user");
-    const storedOrders = localStorage.getItem("orders");
+    // const storedOrders = localStorage.getItem("orders");
 
     if (storedCart) setCart(JSON.parse(storedCart));
     if (storedWishlist) setWishlist(JSON.parse(storedWishlist));
@@ -123,7 +124,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
       setUser(JSON.parse(storedUser));
       setIsAuthenticated(true);
     }
-    if (storedOrders) setOrders(JSON.parse(storedOrders));
+    // if (storedOrders) setOrders(JSON.parse(storedOrders));
   }, []);
 
   useEffect(() => {
@@ -140,9 +141,9 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [user]);
 
-  useEffect(() => {
-    localStorage.setItem("orders", JSON.stringify(orders));
-  }, [orders]);
+  // useEffect(() => {
+  //   localStorage.setItem("orders", JSON.stringify(orders));
+  // }, [orders]);
 
   const addToCart = (product: Product, quantity: number = 1) => {
     setCart((prevCart) => {
@@ -341,25 +342,131 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
     toast.info("Logged out successfully");
   };
 
-  const placeOrder = (address: string, paymentMethod: string) => {
+  const fetchUserOrders = async (userId: number) => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/user/${userId}/orders/`
+      );
+
+      // console.log(response.data); // Log the response data to inspect it
+
+      const transformedOrders = response.data.map((order: any) => {
+        const transformedOrder = {
+          ...order,
+          products: order.products.map((item: any) => {
+            const t = item.product.quantity;
+            const product = products.find(
+              (product) => product.id === item.product.id
+            );
+
+            if (product) {
+              // console.log("Found product:", product);
+              return {
+                product: {
+                  ...product,
+                  price: product.price?.toString() || "0",
+                  reviews: product.reviews.map((review) => ({
+                    ...review,
+                    rating: review.rating?.toString() || "0",
+                  })),
+                },
+                quantity: t || 1,
+              };
+            }
+
+            console.log("Product not found for item:", item);
+            return item;
+          }),
+        };
+        return transformedOrder;
+      });
+
+      console.log(transformedOrders);
+      setOrders(transformedOrders);
+      return transformedOrders;
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+      toast.error("Failed to fetch orders.");
+      return [];
+    }
+  };
+  useEffect(() => {
+    if (products.length > 0 && user) {
+      fetchUserOrders(user.id);
+    }
+  }, [products, user]);
+
+  // const placeOrder = async (address: string, paymentMethod: string) => {
+  //   if (cart.length === 0) {
+  //     toast.error("Your cart is empty");
+  //     return;
+  //   }
+
+  //   const newOrder = {
+  //     products: cart.map((item) => ({
+  //       product: {
+  //         id: item.product.id,
+  //         quantity: item.quantity,
+  //       },
+  //     })),
+  //     totalAmount: cartTotal,
+  //     status: "pending",
+  //     address,
+  //     paymentMethod,
+  //   };
+
+  //   try {
+  //     const response = await axios.post(
+  //       `http://127.0.0.1:8000/api/user/${user?.id}/orders/`,
+  //       newOrder
+  //     );
+
+  //     const placedOrder = response.data;
+
+  //     setOrders((prevOrders) => [...prevOrders, placedOrder]);
+  //     localStorage.setItem("orders", JSON.stringify([...orders, placedOrder]));
+
+  //     clearCart();
+  //     toast.success("Order placed successfully!");
+  //   } catch (error) {
+  //     console.error("Failed to place order:", error);
+  //     toast.error("Failed to place order");
+  //   }
+  // };
+
+  const placeOrder = async (address: string, paymentMethod: string) => {
     if (cart.length === 0) {
       toast.error("Your cart is empty");
       return;
     }
 
-    const newOrder: Order = {
-      id: Date.now(),
-      products: [...cart],
+    const newOrder = {
+      products: cart.map((item) => ({
+        product: {
+          id: item.product.id,
+          quantity: item.quantity,
+        },
+      })),
       totalAmount: cartTotal,
-      date: new Date().toISOString(),
       status: "pending",
       address,
       paymentMethod,
     };
 
-    setOrders((prevOrders) => [...prevOrders, newOrder]);
-    clearCart();
-    toast.success("Order placed successfully!");
+    try {
+      const response = await axios.post(
+        `http://127.0.0.1:8000/api/user/${user?.id}/orders/`,
+        newOrder
+      );
+
+      toast.success("Order placed successfully!");
+      clearCart();
+
+      await fetchUserOrders(user!.id);
+    } catch (error) {
+      console.error("Failed to place order:", error);
+      toast.error("Failed to place order");
+    }
   };
 
   const getProductById = (id: number): Product | undefined => {
@@ -377,7 +484,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     const newReview: ProductReview = {
-      id: Date.now(), // Temporary local ID; real one should come from backend ideally
+      id: Date.now(),
       userId: user.id,
       userName: user.name,
       rating,
@@ -417,12 +524,6 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  // const calculateAverageRating = (reviews: ProductReview[]): number => {
-  //   if (reviews.length === 0) return 0;
-  //   const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-  //   return parseFloat((sum / reviews.length).toFixed(1));
-  // };
-
   const calculateAverageRating = (reviews: ProductReview[]): number => {
     if (reviews.length === 0) return 0;
     const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
@@ -448,6 +549,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
     register,
     logout,
     placeOrder,
+    fetchUserOrders,
     getProductById,
     addReview,
     cartTotal,
