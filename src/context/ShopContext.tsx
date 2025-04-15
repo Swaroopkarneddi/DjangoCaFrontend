@@ -64,6 +64,7 @@ interface ShopContextType {
   clearCart: () => void;
   addToWishlist: (product: Product) => void;
   removeFromWishlist: (productId: number) => void;
+  fetchWishlist: () => void;
   login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
@@ -184,20 +185,97 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
     setCart([]);
   };
 
-  const addToWishlist = (product: Product) => {
-    const isInWishlist = wishlist.some((item) => item.id === product.id);
-    if (!isInWishlist) {
+  // const addToWishlist = (product: Product) => {
+  //   const isInWishlist = wishlist.some((item) => item.id === product.id);
+  //   if (!isInWishlist) {
+  //     setWishlist((prev) => [...prev, product]);
+  //     toast.success(`${product.name} added to wishlist`);
+  //   } else {
+  //     removeFromWishlist(product.id);
+  //   }
+  // };
+
+  // const removeFromWishlist = (productId: number) => {
+  //   setWishlist((prev) => prev.filter((item) => item.id !== productId));
+  //   toast.info("Item removed from wishlist");
+  // };
+
+  const addToWishlist = async (product: Product) => {
+    if (!user) {
+      toast.error("You must be logged in to add to wishlist");
+      return;
+    }
+
+    try {
+      await axios.post(`http://127.0.0.1:8000/api/wishlist/${user.id}/add/`, {
+        product: product.id,
+      });
+
       setWishlist((prev) => [...prev, product]);
       toast.success(`${product.name} added to wishlist`);
-    } else {
-      removeFromWishlist(product.id);
+    } catch (error: any) {
+      if (error.response?.data?.message === "Already in wishlist") {
+        toast.info(`${product.name} is already in wishlist`);
+      } else {
+        console.error("Failed to add to wishlist:", error);
+        toast.error("Could not add to wishlist");
+      }
     }
   };
 
-  const removeFromWishlist = (productId: number) => {
-    setWishlist((prev) => prev.filter((item) => item.id !== productId));
-    toast.info("Item removed from wishlist");
+  const removeFromWishlist = async (productId: number) => {
+    if (!user) {
+      toast.error("You must be logged in to remove from wishlist");
+      return;
+    }
+
+    try {
+      const item = wishlist.find((item) => item.id === productId);
+      if (!item) return;
+
+      // Make sure you pass the data in the correct format for a DELETE request
+      await axios.delete(`http://127.0.0.1:8000/api/wishlist/delete/`, {
+        data: {
+          user_id: user.id,
+          product_id: item.id,
+        },
+      });
+
+      // Update the wishlist state
+      setWishlist((prev) => prev.filter((item) => item.id !== productId));
+      toast.info("Item removed from wishlist");
+    } catch (error) {
+      console.error("Failed to remove from wishlist:", error);
+      toast.error("Could not remove from wishlist");
+    }
   };
+
+  const fetchWishlist = async () => {
+    if (!user) return;
+
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/wishlist/${user.id}/`
+      );
+
+      const wishlistProductIds = response.data.map((item: any) => item.product);
+
+      // Match with existing products list to get full product objects
+      const matchedProducts = products.filter((product) =>
+        wishlistProductIds.includes(product.id)
+      );
+
+      setWishlist(matchedProducts);
+    } catch (error) {
+      console.error("Failed to load wishlist from backend:", error);
+      toast.error("Could not load wishlist");
+    }
+  };
+  useEffect(() => {
+    if (products.length > 0 && user) {
+      fetchWishlist();
+    }
+  }, [products, user]);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
@@ -365,6 +443,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
     clearCart,
     addToWishlist,
     removeFromWishlist,
+    fetchWishlist,
     login,
     register,
     logout,
