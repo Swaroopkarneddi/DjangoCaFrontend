@@ -145,45 +145,147 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
   //   localStorage.setItem("orders", JSON.stringify(orders));
   // }, [orders]);
 
-  const addToCart = (product: Product, quantity: number = 1) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find(
-        (item) => item.product.id === product.id
-      );
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-      } else {
-        return [...prevCart, { product, quantity }];
-      }
-    });
-    toast.success(`${product.name} added to cart`);
-  };
-
-  const removeFromCart = (productId: number) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.product.id !== productId)
-    );
-    toast.info("Item removed from cart");
-  };
-
-  const updateCartItemQuantity = (productId: number, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(productId);
+  // const addToCart = (product: Product, quantity: number = 1) => {
+  //   setCart((prevCart) => {
+  //     const existingItem = prevCart.find(
+  //       (item) => item.product.id === product.id
+  //     );
+  //     if (existingItem) {
+  //       return prevCart.map((item) =>
+  //         item.product.id === product.id
+  //           ? { ...item, quantity: item.quantity + quantity }
+  //           : item
+  //       );
+  //     } else {
+  //       return [...prevCart, { product, quantity }];
+  //     }
+  //   });
+  //   toast.success(`${product.name} added to cart`);
+  // };
+  const addToCart = async (product: Product, quantity: number = 1) => {
+    if (!user) {
+      toast.error("Please log in to add items to cart.");
       return;
     }
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
-      )
-    );
+
+    try {
+      await axios.post(`http://127.0.0.1:8000/api/cart/${user.id}/add/`, {
+        product_id: product.id,
+        quantity,
+      });
+
+      setCart((prevCart) => {
+        const existingItem = prevCart.find(
+          (item) => item.product.id === product.id
+        );
+        if (existingItem) {
+          return prevCart.map((item) =>
+            item.product.id === product.id
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          );
+        } else {
+          return [...prevCart, { product, quantity }];
+        }
+      });
+
+      toast.success(`${product.name} added to cart`);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Failed to add item to cart");
+    }
   };
 
-  const clearCart = () => {
-    setCart([]);
+  // const removeFromCart = (productId: number) => {
+  //   setCart((prevCart) =>
+  //     prevCart.filter((item) => item.product.id !== productId)
+  //   );
+  //   toast.info("Item removed from cart");
+  // };
+  const removeFromCart = async (productId: number) => {
+    if (!user) {
+      toast.error("Please log in to remove items from cart.");
+      return;
+    }
+
+    try {
+      await axios.delete(
+        `http://127.0.0.1:8000/api/cart/${user.id}/delete/${productId}/`
+      );
+      setCart((prevCart) =>
+        prevCart.filter((item) => item.product.id !== productId)
+      );
+      toast.info("Item removed from cart");
+    } catch (error) {
+      console.error("Error removing from cart:", error);
+      toast.error("Failed to remove item from cart");
+    }
+  };
+
+  // const updateCartItemQuantity = (productId: number, quantity: number) => {
+  //   if (quantity <= 0) {
+  //     removeFromCart(productId);
+  //     return;
+  //   }
+  //   setCart((prevCart) =>
+  //     prevCart.map((item) =>
+  //       item.product.id === productId ? { ...item, quantity } : item
+  //     )
+  //   );
+  // };
+  const updateCartItemQuantity = async (
+    productId: number,
+    quantity: number
+  ) => {
+    if (!user) {
+      toast.error("Please log in to update cart.");
+      return;
+    }
+
+    if (quantity <= 0) {
+      await removeFromCart(productId);
+      return;
+    }
+
+    try {
+      await axios.put(
+        `http://127.0.0.1:8000/api/cart/${user.id}/update/${productId}/`,
+        {
+          quantity,
+        }
+      );
+
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.product.id === productId ? { ...item, quantity } : item
+        )
+      );
+    } catch (error) {
+      console.error("Error updating cart:", error);
+      toast.error("Failed to update item quantity");
+    }
+  };
+
+  // const clearCart = () => {
+  //   setCart([]);
+  // };
+  const clearCart = async () => {
+    if (!user) {
+      setCart([]);
+      return;
+    }
+
+    try {
+      for (const item of cart) {
+        await axios.delete(
+          `http://127.0.0.1:8000/api/cart/${user.id}/delete/${item.product.id}/`
+        );
+      }
+      setCart([]);
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+      toast.error("Failed to clear cart");
+    }
   };
 
   // const addToWishlist = (product: Product) => {
@@ -494,7 +596,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
 
     try {
       await axios.post(
-        `http://127.0.0.1:8000/products/${productId}/reviews/add/`,
+        `http://127.0.0.1:8000/api/products/${productId}/reviews/add/`,
         {
           userId: newReview.userId,
           rating: newReview.rating,
